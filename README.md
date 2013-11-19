@@ -64,7 +64,7 @@ Adding new routes:
  * `route_del(+Route, +Before:list, :Goal)` - registers a new DELETE handler. Takes the list of middleware predicates to run.
  * `route_post(+Route, +Before:list, :Goal)` - registers a new POST handler. Takes the list of middleware predicates to run.
 
-Route handler predicates can take extra argument or variables from the route. Example:
+Route handler predicates can take variables from the route. Example:
 
     :- http_get(post/show/Slug, post_show(Slug)).
     
