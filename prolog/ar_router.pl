@@ -143,7 +143,7 @@ dispatch(Method, Path):-
     
 run_handler([Step|Rest], Module, Goal):- !,
     debug(ar_router, 'calling: ~w', [Step]),
-    Next = ar_route:run_before(Rest, Module, Goal),
+    Next = ar_router:run_handler(Rest, Module, Goal),
     (   call(Module:Step, Next)
     ->  true
     ;   throw(error(middleware_failed(Step)))).
