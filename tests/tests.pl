@@ -37,15 +37,15 @@ test(path5):-
     path_to_route('/a/b/c/', a/b/c/(/)).
     
 test(index, [ setup(retractall(visited(_))) ]):-
-    ar_route([ path('/'), method(get) ], fallback_fail),
+    ar_route([ path('/'), method(get) ]),
     visited(index).
     
 test(a, [ setup(retractall(visited(_))) ]):-
-    ar_route([ path('/a'), method(get) ], fallback_fail),
+    ar_route([ path('/a'), method(get) ]),
     visited(a).
     
 test(hello, [ setup(retractall(visited(_))) ]):-
-    ar_route([ path('/hello/world'), method(get) ], fallback_fail),
+    ar_route([ path('/hello/world'), method(get) ]),
     visited(hello(world)).
 
 :- end_tests(ar_router).

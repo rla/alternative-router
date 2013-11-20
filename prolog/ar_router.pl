@@ -136,7 +136,7 @@ ar_route(Request):-
 % a middleware in before-list fails.
 
 dispatch(Method, Path):-
-    route(Method, Path, Module, Goal, Before),
+    route(Method, Path, Module, Goal, Before), !,
     (   run_handler(Before, Module, Goal)
     ->  true
     ;   throw(error(handler_failed(Method, Path)))).
