@@ -54,7 +54,7 @@ route_put(Route, Goal):-
 % Registers a new DELETE route handler.
     
 route_del(Route, Goal):-
-    new_route(del, Route, [], Goal).
+    new_route(delete, Route, [], Goal).
 
 %% route_post(+Route, :Goal) is det.
 %
@@ -85,7 +85,7 @@ route_put(Route, Before, Goal):-
 % Takes list of before-handlers.
     
 route_del(Route, Before, Goal):-
-    new_route(del, Route, Before, Goal).
+    new_route(delete, Route, Before, Goal).
 
 %% route_post(+Route, +Before:list, :Goal) is det.
 %
