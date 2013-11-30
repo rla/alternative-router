@@ -17,6 +17,12 @@ of RESTful web services.
         format('Hello ~w', [Name]).
 
     :- http_server(ar_route, [port(8008)]).
+    
+## Path terms
+
+ * Root: `'/'` -> `/`;
+ * Norm: `'/a/b/c'` -> `a/b/c`;
+ * Slash at end: `'/a/b/c/'` -> `a/b/c/''`;
 
 ## Using with http_dispatch
 

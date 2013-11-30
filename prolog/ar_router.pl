@@ -170,8 +170,11 @@ path_to_route_term([First|Rest], Term):-
     
 path_to_route_term([/,A|Rest], Acc, Term):-
     path_to_route_term(Rest, /(Acc, A), Term).
-    
-path_to_route_term([A], Acc, /(Acc, A)).
+
+path_to_route_term([A], Acc, Route):-
+    (A = (/)
+    ->  Route = /(Acc, '')
+    ;   Route = /(Acc, A)).
 
 path_to_route_term([], Acc, Acc).
 
