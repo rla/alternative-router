@@ -21,7 +21,7 @@ of RESTful web services.
 ## Path terms
 
  * Root: `'/'` -> `/`;
- * Norm: `'/a/b/c'` -> `a/b/c`;
+ * Normal: `'/a/b/c'` -> `a/b/c`;
  * Slash at end: `'/a/b/c/'` -> `a/b/c/''`;
 
 ## Using with http_dispatch
@@ -35,12 +35,12 @@ Make fallback to `http_dispatch/1` like this:
     
 and use `handle_request/1` as the handler in `http_server`.
 
-## Middlewares
+## Before-handler
 
-Routes can have intermediate goals. Example is cheking auth information
+Routes can have intermediate goals. The following example is cheking auth information
 before executing the handler:
 
-    :- route_get(api/resource, [auth], handle_resource).
+    :- route_get(api/resource, auth, handle_resource).
 
     auth(Next):-
     (   http_session_data(user(User)),
@@ -54,7 +54,7 @@ before executing the handler:
     handle_resource:-
         ...
 
-The middleware predicate calls its first argument when the request should pass the middleware.
+The before-handler predicate calls its first argument when the request should pass it.
 Otherwise it should produce response itself.
 
 ## List of predicates
@@ -65,10 +65,10 @@ Adding new routes:
  * `route_put(+Route, :Goal)` - registers a new PUT handler.
  * `route_del(+Route, :Goal)` - registers a new DELETE handler.
  * `route_post(+Route, :Goal)` - registers a new POST handler.
- * `route_get(+Route, +Before:list, :Goal)` - registers a new GET handler. Takes the list of middleware predicates to run.
- * `route_put(+Route, +Before:list, :Goal)` - registers a new PUT handler. Takes the list of middleware predicates to run.
- * `route_del(+Route, +Before:list, :Goal)` - registers a new DELETE handler. Takes the list of middleware predicates to run.
- * `route_post(+Route, +Before:list, :Goal)` - registers a new POST handler. Takes the list of middleware predicates to run.
+ * `route_get(+Route, :Before, :Goal)` - registers a new GET handler. Takes the list of middleware predicates to run.
+ * `route_put(+Route, :Before, :Goal)` - registers a new PUT handler. Takes the list of middleware predicates to run.
+ * `route_del(+Route, :Before, :Goal)` - registers a new DELETE handler. Takes the list of middleware predicates to run.
+ * `route_post(+Route, :Before, :Goal)` - registers a new POST handler. Takes the list of middleware predicates to run.
 
 Route handler predicates can take variables from the route. Example:
 
@@ -86,8 +86,7 @@ Dispatching:
 `ar_route(+Request)` - takes given request and attempts to find suitable handler.
 
 Request must contain terms `method(Method)` and `path(Path)`. Throws `handler_failed(Method, Path)` when
-handler was found but it failed during execution. Throws `middleware_failed(Goal)` when
-a middleware in before-list fails.
+handler was found but it failed during execution.
 
 ## License
 

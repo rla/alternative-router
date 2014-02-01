@@ -1,5 +1,5 @@
 :- use_module(library(http/thread_httpd)).
-:- use_module(library(ar_router)).
+:- use_module(prolog/ar_router).
 
 :- route_get(hello/Name, handle_hello(Name)).
 
