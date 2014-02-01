@@ -8,6 +8,7 @@
     route_post/3,   % +Route, :BeforeGoal, :Goal
     route_put/3,    % +Route, :BeforeGoal, :Goal
     route_del/3,    % +Route, :BeforeGoal, :Goal
+    new_route/3,    % +Method, +Route, :Goal
     new_route/4,    % +Method, +Route, :BeforeGoal, :Goal
     path_to_route/2 % +Path, -Route
 ]).
@@ -115,6 +116,9 @@ new_route(Method, Route, Goal):-
     (   route(Method, Route, _, _)
     ->  true
     ;   assertz(route(Method, Route, none, Goal))).
+
+check_route(Atom):-
+    atomic(Atom).
 
 %! ar_route(+Request) is semidet.
 %

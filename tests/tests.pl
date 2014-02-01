@@ -66,6 +66,13 @@ before(Token, Goal):-
 handle_hello(X):-
     assertz(visited(hello(X))).
 
+% Custom method.
+
+:- new_route(options, test/custom, test_custom).
+
+test_custom:-
+    assertz(visited(custom)).
+
 clean:-
     retractall(visited(_)),
     retractall(before(_)).
@@ -128,5 +135,9 @@ test(before_del_b, [ setup(clean) ]):-
 test(hello, [ setup(clean) ]):-
     ar_route([ path('/hello/world'), method(get) ]),
     visited(hello(world)).
+
+test(custom, [ setup(clean) ]):-
+    ar_route([ path('/test/custom'), method(options) ]),
+    visited(custom).
 
 :- end_tests(ar_router).
