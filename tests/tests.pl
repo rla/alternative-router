@@ -143,4 +143,12 @@ test(custom, [ setup(clean) ]):-
 test(invalid_route):-
     catch((route_get(a(123), _), fail), error(invalid_route(_)), true).
 
+test(remove):-
+    route_get(test/remove, true),
+    route(get, test/remove, _, _),
+    route_remove(_, test/remove),
+    (   route(get, test/remove, _, _)
+    ->  fail
+    ;   true).
+
 :- end_tests(ar_router).

@@ -10,6 +10,8 @@
     route_del/3,    % +Route, :BeforeGoal, :Goal
     new_route/3,    % +Method, +Route, :Goal
     new_route/4,    % +Method, +Route, :BeforeGoal, :Goal
+    route_remove/2, % +Method, +Route
+    route/4,        % ?Method, ?Route, ?Before, ?Goal
     path_to_route/2 % +Path, -Route
 ]).
 
@@ -20,7 +22,9 @@ HTTP routing with path expressions.
 
 :- use_module(library(debug)).
 
-% route(?Method, ?Route, ?Before, ?Goal).
+%! route(?Method, ?Route, ?Before, ?Goal) is nondet.
+%
+% Retrieves currently registered routes.
 
 :- dynamic(route/4).
 
@@ -132,6 +136,15 @@ check_route(/(Left, Right)):-
 check_route(Route):-
     throw(error(invalid_route(Route))).
 
+%! route_remove(+Method, +Route) is det.
+%
+% Removes the given route. When either Method
+% or Route or both are not set or are partially
+% instantiated then all matching routes are removed.
+
+route_remove(Method, Route):-
+    retractall(route(Method, Route, _, _)).
+
 %! ar_route(+Request) is semidet.
 %
 % Routes the request into an handler
@@ -162,10 +175,14 @@ dispatch(Method, Path):-
     ->  true
     ;   throw(error(handler_failed(Method, Path)))).
     
+:- meta_predicate(run_handler(+, 0)).
+
 run_handler(Before, Goal):- !,
     (   Before = goal(BeforeGoal)
     ->  call(BeforeGoal, ar_router:run_handler(Goal))
     ;   run_handler(Goal)).
+
+:- meta_predicate(run_handler(0)).
 
 run_handler(Handler):-
     call(Handler).
