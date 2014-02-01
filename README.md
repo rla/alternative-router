@@ -8,7 +8,7 @@ of RESTful web services.
 ## Example
 
     :- use_module(library(http/thread_httpd)).
-    :- use_module(library(ar_router)).
+    :- use_module(library(arouter)).
 
     :- route_get(hello/Name, handle_hello(Name)).
 
@@ -16,7 +16,7 @@ of RESTful web services.
         format('Content-Type: text/plain; charset=UTF-8~n~n'),
         format('Hello ~w', [Name]).
 
-    :- http_server(ar_route, [port(8008)]).
+    :- http_server(route, [port(8008)]).
 
 Save it to a file, run it, and then visit <http://localhost:8008/hello/world>.
 
@@ -41,7 +41,7 @@ not agree with this then open an issue on the tracker.
 Make fallback to `http_dispatch/1` like this:
 
     handle_request(Request):-
-    (   ar_route(Request)
+    (   route(Request)
     ->  true
     ;   http_dispatch(Request)).
     
@@ -109,7 +109,7 @@ predicate.
 
 ### Dispatching
 
-`ar_route(+Request)` - takes given request and attempts to find suitable handler.
+`route(+Request)` - takes given request and attempts to find suitable handler.
 
 Request must contain terms `method(Method)` and `path(Path)`. Throws `handler_failed(Method, Path)` when
 handler was found but it failed during execution.
@@ -151,7 +151,7 @@ Or if you cloned the repo:
 Enable debugging with:
 
     ?- use_module(library(debug)).
-    ?- debug(ar_router).
+    ?- debug(arouter).
 
 ## Bug reports/feature requests
 

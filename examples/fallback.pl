@@ -1,6 +1,6 @@
 :- use_module(library(http/thread_httpd)).
 :- use_module(library(http/http_dispatch)).
-:- use_module(prolog/ar_router).
+:- use_module(prolog/arouter).
 
 :- route_get(hello/Name, handle_hello(Name)).
 
@@ -11,6 +11,6 @@ handle_hello(Name):-
 :- http_server(handle_request, [port(8008)]).
 
 handle_request(Request):-
-    (   ar_route(Request)
+    (   aroute(Request)
     ->  true
     ;   http_dispatch(Request)).

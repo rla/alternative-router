@@ -1,5 +1,5 @@
-:- begin_tests(ar_router).
-:- use_module(prolog/ar_router).
+:- begin_tests(arouter).
+:- use_module(prolog/arouter).
 
 :- dynamic(visited/1).
 :- dynamic(before/1).
@@ -93,51 +93,51 @@ test(path5):-
     path_to_route('/a/b/c/', a/b/c/'').
     
 test(index, [ setup(clean) ]):-
-    ar_route([ path('/'), method(get) ]),
+    route([ path('/'), method(get) ]),
     visited(/).
 
 test(get_a, [ setup(clean) ]):-
-    ar_route([ path('/a'), method(get) ]),
+    route([ path('/a'), method(get) ]),
     visited(get(a)).
 
 test(post_a, [ setup(clean) ]):-
-    ar_route([ path('/a'), method(post) ]),
+    route([ path('/a'), method(post) ]),
     visited(post(a)).
 
 test(put_a, [ setup(clean) ]):-
-    ar_route([ path('/a'), method(put) ]),
+    route([ path('/a'), method(put) ]),
     visited(put(a)).
 
 test(del_a, [ setup(clean) ]):-
-    ar_route([ path('/a'), method(delete) ]),
+    route([ path('/a'), method(delete) ]),
     visited(del(a)).
 
 test(before_get_b, [ setup(clean) ]):-
-    ar_route([ path('/b'), method(get) ]),
+    route([ path('/b'), method(get) ]),
     visited(get(b)),
     before(get_b).
 
 test(before_post_b, [ setup(clean) ]):-
-    ar_route([ path('/b'), method(post) ]),
+    route([ path('/b'), method(post) ]),
     visited(post(b)),
     before(post_b).
 
 test(before_put_b, [ setup(clean) ]):-
-    ar_route([ path('/b'), method(put) ]),
+    route([ path('/b'), method(put) ]),
     visited(put(b)),
     before(put_b).
 
 test(before_del_b, [ setup(clean) ]):-
-    ar_route([ path('/b'), method(delete) ]),
+    route([ path('/b'), method(delete) ]),
     visited(del(b)),
     before(del_b).
 
 test(hello, [ setup(clean) ]):-
-    ar_route([ path('/hello/world'), method(get) ]),
+    route([ path('/hello/world'), method(get) ]),
     visited(hello(world)).
 
 test(custom, [ setup(clean) ]):-
-    ar_route([ path('/test/custom'), method(options) ]),
+    route([ path('/test/custom'), method(options) ]),
     visited(custom).
 
 test(invalid_route):-
@@ -151,4 +151,4 @@ test(remove):-
     ->  fail
     ;   true).
 
-:- end_tests(ar_router).
+:- end_tests(arouter).

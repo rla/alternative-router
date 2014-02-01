@@ -1,5 +1,5 @@
-:- module(ar_router, [
-    ar_route/1,     % +Request
+:- module(arouter, [
+    route/1,        % +Request
     route_get/2,    % +Route, :Goal
     route_post/2,   % +Route, :Goal
     route_put/2,    % +Route, :Goal
@@ -145,26 +145,27 @@ check_route(Route):-
 route_remove(Method, Route):-
     retractall(route(Method, Route, _, _)).
 
-%! ar_route(+Request) is semidet.
+%! route(+Request) is semidet.
 %
 % Routes the request into an handler
 % Fails when no handler is found.
-%
 % Request must contain method(Method)
 % and path(Path).
+% Throws handler_failed(Method, Path) when
+% handler was found but it failed during
+% execution.
     
-ar_route(Request):-
+route(Request):-
     memberchk(method(Method), Request),
     memberchk(path(Path), Request),
     path_to_route(Path, Route),
-    debug(ar_router, 'dispatch: ~p ~p', [Method, Route]),
+    debug(arouter, 'dispatch: ~p ~p', [Method, Route]),
     dispatch(Method, Route).
 
 %! dispatch(+Method, +Route) is semidet.
 %
 % Attempts to dispatch the request.
 % Fails when no matching handler is found.
-%
 % Throws handler_failed(Method, Path) when
 % handler was found but it failed during
 % execution.
@@ -179,7 +180,7 @@ dispatch(Method, Path):-
 
 run_handler(Before, Goal):- !,
     (   Before = goal(BeforeGoal)
-    ->  call(BeforeGoal, ar_router:run_handler(Goal))
+    ->  call(BeforeGoal, arouter:run_handler(Goal))
     ;   run_handler(Goal)).
 
 :- meta_predicate(run_handler(0)).
