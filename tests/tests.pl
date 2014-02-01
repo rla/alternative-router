@@ -140,4 +140,7 @@ test(custom, [ setup(clean) ]):-
     ar_route([ path('/test/custom'), method(options) ]),
     visited(custom).
 
+test(invalid_route):-
+    catch((route_get(a(123), _), fail), error(invalid_route(_)), true).
+
 :- end_tests(ar_router).

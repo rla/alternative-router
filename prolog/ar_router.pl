@@ -102,6 +102,7 @@ route_post(Route, Before, Goal):-
 % for the method.
     
 new_route(Method, Route, Before, Goal):-
+    check_route(Route),
     (   route(Method, Route, _, _)
     ->  true
     ;   assertz(route(Method, Route, goal(Before), Goal))).
@@ -113,12 +114,23 @@ new_route(Method, Route, Before, Goal):-
 % for the method.
 
 new_route(Method, Route, Goal):-
+    check_route(Route),
     (   route(Method, Route, _, _)
     ->  true
     ;   assertz(route(Method, Route, none, Goal))).
 
 check_route(Atom):-
-    atomic(Atom).
+    atomic(Atom), !.
+
+check_route(Var):-
+    var(Var), !.
+
+check_route(/(Left, Right)):-
+    check_route(Left),
+    check_route(Right), !.
+
+check_route(Route):-
+    throw(error(invalid_route(Route))).
 
 %! ar_route(+Request) is semidet.
 %

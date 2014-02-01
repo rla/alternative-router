@@ -22,17 +22,17 @@ Save it to a file, run it, and then visit <http://localhost:8008/hello/world>.
 
 ## Path terms
 
-Normal path terms correspond directly to URL paths with implicit root (`/`)
+Normal path terms correspond directly to URL paths with the implicit root (`/`)
 symbol. For example, `path/to/something` corresponds to URL
 `http://example.com/path/to/something`. To match the root itself, `/` alone
 must be used. To match an URL path with a slash in the end, an empty atom
-has to be used in the end of the path term. For example, to match URL
+has to be used at the end of the path term. For example, to match URL
 `http://example.com/path/to/something/`, a path term `path/to/something/''`
 must be used.
 
 Why not "prettier" path terms? It is possible by overloading `/` as prefix and postfix
 operator. Then terms like `/something` and `/something/to/` can be used. However, defining
-single-symbol operators that are likely to clash with other modules, has been intentionally
+single-symbol operators that are likely to clash with other modules has been intentionally
 avoided. In practical usage, most paths are likely to be normal paths anyway. If you do
 not agree with this then open an issue on the tracker.
 
