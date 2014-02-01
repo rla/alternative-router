@@ -114,11 +114,22 @@ predicate.
 Request must contain terms `method(Method)` and `path(Path)`. Throws `handler_failed(Method, Path)` when
 handler was found but it failed during execution.
 
+### Inspecting routes
+
+Use the `route(?Method, ?Route, ?Before, ?Goal)` predicate.
+
+### Removing routes
+
+Use the `route_remove(Method, Route)` predicate. Both arguments
+can be unbound or partially instantiated.
+
 ## Installation
 
 To install as a package:
 
     pack_install('http://packs.rlaanemets.com/alternative-router/arouter-*.tgz').
+
+Tested with Swi-Prolog 7.x but should work with earlier versions too.
 
 ## Full API documentation
 
@@ -134,6 +145,13 @@ In the package root, insert into swipl:
 Or if you cloned the repo:
 
     make test
+
+## Debugging
+
+Enable debugging with:
+
+    ?- use_module(library(debug)).
+    ?- debug(ar_router).
 
 ## Bug reports/feature requests
 
