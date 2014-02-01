@@ -157,7 +157,7 @@ ar_route(Request):-
     memberchk(method(Method), Request),
     memberchk(path(Path), Request),
     path_to_route(Path, Route),
-    debug(ar_route, 'dispatch: ~p ~p', [Method, Route]),
+    debug(ar_router, 'dispatch: ~p ~p', [Method, Route]),
     dispatch(Method, Route).
 
 %! dispatch(+Method, +Route) is semidet.
