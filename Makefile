@@ -3,7 +3,7 @@ packfile=arouter-$(version).tgz
 remote=packs@packs.rlaanemets.com:/usr/share/nginx/packs.rlaanemets.com/alternative-router
 
 package: test
-	tar cvzf $(packfile) prolog tests pack.pl README.md LICENSE
+	tar cvzf $(packfile) prolog tests examples pack.pl README.md LICENSE
 
 test:
 	swipl -s tests/tests.pl -g run_tests,halt -t 'halt(1)'

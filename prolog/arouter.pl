@@ -147,7 +147,7 @@ route_remove(Method, Route):-
 
 %! route(+Request) is semidet.
 %
-% Routes the request into an handler
+% Routes the request into an handler.
 % Fails when no handler is found.
 % Request must contain method(Method)
 % and path(Path).
