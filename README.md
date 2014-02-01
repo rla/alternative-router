@@ -17,12 +17,24 @@ of RESTful web services.
         format('Hello ~w', [Name]).
 
     :- http_server(ar_route, [port(8008)]).
-    
+
+Save it to a file, run it, and then visit <http://localhost:8008/hello/world>.
+
 ## Path terms
 
- * Root: `'/'` -> `/`;
- * Normal: `'/a/b/c'` -> `a/b/c`;
- * Slash at end: `'/a/b/c/'` -> `a/b/c/''`;
+Normal path terms correspond directly to URL paths with implicit root (`/`)
+symbol. For example, `path/to/something` corresponds to URL
+`http://example.com/path/to/something`. To match the root itself, `/` alone
+must be used. To match an URL path with a slash in the end, an empty atom
+has to be used in the end of the path term. For example, to match URL
+`http://example.com/path/to/something/`, a path term `path/to/something/''`
+must be used.
+
+Why not "prettier" path terms? It is possible by overloading `/` as prefix and postfix
+operator. Then terms like `/something` and `/something/to/` can be used. However, defining
+single-symbol operators that are likely to clash with other modules, has been intentionally
+avoided. In practical usage, most paths are likely to be normal paths anyway. If you do
+not agree with this then open an issue on the tracker.
 
 ## Using with http_dispatch
 
@@ -55,20 +67,34 @@ before executing the handler:
         ...
 
 The before-handler predicate calls its first argument when the request should pass it.
-Otherwise it should produce response itself.
+Otherwise it should produce the response itself.
 
 ## List of predicates
 
-Adding new routes:
+### Adding new routes
 
- * `route_get(+Route, :Goal)` - registers a new GET handler.
- * `route_put(+Route, :Goal)` - registers a new PUT handler.
- * `route_del(+Route, :Goal)` - registers a new DELETE handler.
- * `route_post(+Route, :Goal)` - registers a new POST handler.
- * `route_get(+Route, :Before, :Goal)` - registers a new GET handler. Takes the list of middleware predicates to run.
- * `route_put(+Route, :Before, :Goal)` - registers a new PUT handler. Takes the list of middleware predicates to run.
- * `route_del(+Route, :Before, :Goal)` - registers a new DELETE handler. Takes the list of middleware predicates to run.
- * `route_post(+Route, :Before, :Goal)` - registers a new POST handler. Takes the list of middleware predicates to run.
+`route_get(+Route, :Goal)` registers a new GET handler.
+
+`route_put(+Route, :Goal)` registers a new PUT handler.
+
+`route_del(+Route, :Goal)` registers a new DELETE handler.
+
+`route_post(+Route, :Goal)` registers a new POST handler.
+
+`route_get(+Route, :Before, :Goal)` registers a new GET handler with a before action.
+
+`route_put(+Route, :Before, :Goal)` registers a new PUT handler with a before action.
+
+`route_del(+Route, :Before, :Goal)` registers a new DELETE handler with a before action.
+
+`route_post(+Route, :Before, :Goal)` registers a new POST handler with a before action.
+
+`new_route(+Method, +Route, :Goal)` registers a new custom method handler.
+
+`new_route(+Method, +Route, :Before, :Goal)` registers a new custom method handler with a before action.
+
+All predicates above will throw an error when the `Route` does not contain the
+suitable term.
 
 Route handler predicates can take variables from the route. Example:
 
@@ -81,12 +107,38 @@ However, they do not take the `Request` argument, unlike the `http_dispatch` han
 current request, use the [http_current_request/1](http://www.swi-prolog.org/pldoc/doc_for?object=http_current_request/1)
 predicate.
 
-Dispatching:
+### Dispatching
 
 `ar_route(+Request)` - takes given request and attempts to find suitable handler.
 
 Request must contain terms `method(Method)` and `path(Path)`. Throws `handler_failed(Method, Path)` when
 handler was found but it failed during execution.
+
+## Installation
+
+To install as a package:
+
+    pack_install('http://packs.rlaanemets.com/alternative-router/arouter-*.tgz').
+
+## Full API documentation
+
+See <http://packs.rlaanemets.com/alternative-router/doc/>.
+
+## Running tests
+
+In the package root, insert into swipl:
+
+    [tests/tests].
+    run_tests.
+
+Or if you cloned the repo:
+
+    make test
+
+## Bug reports/feature requests
+
+Please send bug reports/feature request through the GitHub
+project [page](https://github.com/rla/alternative-router).
 
 ## License
 
