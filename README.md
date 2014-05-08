@@ -69,6 +69,28 @@ before executing the handler:
 The before-handler predicate calls its first argument when the request should pass it.
 Otherwise it should produce the response itself.
 
+## Route-path matching
+
+A path will match the route when:
+
+ * Path and rule are `/`.
+ * Path is an atomic value and the route is same atomic value or a variable.
+ * Path is `/(P1, P2)`, route is `/(R1, R2)` and R1 matches P1 and R2 matches P2.
+
+## Route priority
+
+Routes are tested in reverse to the adding order. Overlapping routes can be added. Structurally equivalent
+routes cannot be added. Routes are overlapping when one route has atom in position of route variable in the
+other. Routes are structurally equivalent when:
+
+ * Both routes are `/`.
+ * Both routes are variables.
+ * Both routes are same atomic values.
+ * One route is `/(A1, B1)`, the other is `/(A2, B2)` and
+   A1, A2 are structurally equivalent and B1, B2 are structurally equivalent.
+
+Structural equivalence is used for detecting duplicate rules. This plays nice with the `make/0` goal.
+
 ## List of predicates
 
 ### Adding new routes
@@ -127,7 +149,7 @@ can be unbound or partially instantiated.
 
 To install as a package:
 
-    pack_install('http://packs.rlaanemets.com/alternative-router/arouter-*.tgz').
+    pack_install(arouter).
 
 Tested with Swi-Prolog 7.x but should work with earlier versions too.
 
@@ -152,6 +174,11 @@ Enable debugging with:
 
     ?- use_module(library(debug)).
     ?- debug(arouter).
+
+## Changelog
+
+ * 2014-05-08 version 1.0.0. Precise route matching semantics.
+ * 2014-02-01 version 0.0.1
 
 ## Bug reports/feature requests
 
