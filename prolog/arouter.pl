@@ -21,6 +21,7 @@ HTTP routing with path expressions.
 */
 
 :- use_module(library(debug)).
+:- use_module(library(error)).
 
 %! route(?Method, ?Route, ?Before, ?Goal) is nondet.
 %
@@ -106,10 +107,12 @@ route_post(Route, Before, Goal):-
 % for the method.
     
 new_route(Method, Route, Before, Goal):-
+    must_be(atom, Method),
     check_route(Route),
-    (   route(Method, Route, _, _)
-    ->  true
-    ;   assertz(route(Method, Route, goal(Before), Goal))).
+    (   existing_route(Method, Route, Ref)
+    ->  erase(Ref)
+    ;   true),
+    asserta(route(Method, Route, goal(Before), Goal)).
 
 %! new_route(+Method, +Route, :Goal) is det.
 %
@@ -118,10 +121,12 @@ new_route(Method, Route, Before, Goal):-
 % for the method.
 
 new_route(Method, Route, Goal):-
+    must_be(atom, Method),
     check_route(Route),
-    (   route(Method, Route, _, _)
-    ->  true
-    ;   assertz(route(Method, Route, none, Goal))).
+    (   existing_route(Method, Route, Ref)
+    ->  erase(Ref)
+    ;   true),
+    asserta(route(Method, Route, none, Goal)).
 
 check_route(Atom):-
     atomic(Atom), !.
@@ -136,14 +141,82 @@ check_route(/(Left, Right)):-
 check_route(Route):-
     throw(error(invalid_route(Route))).
 
+% Matches route to path.
+% This similar to route-route match
+% but a route variable can match atomic
+% value in the path.
+
+route_path_match(Route, /):- !,
+    nonvar(Route),
+    Route = '/'.
+
+route_path_match(Route, Atomic):-
+    atomic(Atomic), !,
+    Route = Atomic.
+
+route_path_match(Route, /(LeftPath, RightPath)):-
+    nonvar(Route), !,
+    Route = /(LeftRoute, RightRoute),
+    route_path_match(LeftRoute, LeftPath),
+    route_path_match(RightRoute, RightPath).
+
+% Matches two routes to detect
+% "same" routes. Does not bind
+% variables between them
+
+route_route_match(Root1, Root2):-
+    nonvar(Root1),
+    nonvar(Root2),
+    Root1 = '/',
+    Root2 = '/', !.
+
+route_route_match(Atomic1, Atomic2):-
+    atomic(Atomic1),
+    atomic(Atomic2),
+    Atomic1 \= '/',
+    Atomic1 = Atomic2, !.
+
+route_route_match(Var1, Var2):-
+    var(Var1),
+    var(Var2), !.
+
+route_route_match(Route1, Route2):-
+    nonvar(Route1),
+    nonvar(Route2),
+    Route1 = /(Left1, Right1),
+    Route2 = /(Left2, Right2),
+    route_route_match(Left1, Left2),
+    route_route_match(Right1, Right2).
+
+% Finds clause references of all
+% matching routes.
+
+existing_route(Method, Route, Ref):-
+    clause(route(Method, RouteTest, _, _), _, Ref),
+    route_route_match(Route, RouteTest).
+
+% Same as above but finds all matching routes.
+
+existing_routes(Method, Route, Refs):-
+    findall(Ref, existing_route(Method, Route, Ref), Refs).
+
 %! route_remove(+Method, +Route) is det.
 %
 % Removes the given route. When either Method
 % or Route or both are not set or are partially
 % instantiated then all matching routes are removed.
+% Method can be left unbound.
 
 route_remove(Method, Route):-
-    retractall(route(Method, Route, _, _)).
+    check_route(Route),
+    existing_routes(Method, Route, Refs),
+    remove_refs(Refs).
+
+remove_refs([Ref|Refs]):-
+    erase(Ref),
+    remove_refs(Refs).
+
+remove_refs([]).
 
 %! route(+Request) is semidet.
 %
@@ -171,11 +244,12 @@ route(Request):-
 % execution.
 
 dispatch(Method, Path):-
-    route(Method, Path, Before, Goal), !,
+    route(Method, Route, Before, Goal),
+    route_path_match(Route, Path), !,
     (   run_handler(Before, Goal)
     ->  true
     ;   throw(error(handler_failed(Method, Path)))).
-    
+
 :- meta_predicate(run_handler(+, 0)).
 
 run_handler(Before, Goal):- !,

@@ -91,6 +91,62 @@ test(path4):-
     
 test(path5):-
     path_to_route('/a/b/c/', a/b/c/'').
+
+test(route_path_match_1):-
+    arouter:route_path_match(A, path),
+    nonvar(A), A = path.
+
+test(route_path_match_2):-
+    \+ arouter:route_path_match(_, /).
+
+test(route_path_match_3):-
+    \+ arouter:route_path_match(abc, /(path, to)).
+
+test(route_path_match_4):-
+    arouter:route_path_match(/(path, To), /(path, to)),
+    nonvar(To), To = to.
+
+test(route_path_match_5):-
+    \+ arouter:route_path_match(_, /(path, to)).
+
+test(route_route_match_1):-
+    \+ arouter:route_route_match(_, path).
+
+test(route_route_match_2):-
+    arouter:route_route_match(_, _).
+
+test(route_route_match_3):-
+    arouter:route_route_match(/, /).
+
+test(route_route_match_4):-
+    arouter:route_route_match(path, path).
+
+test(route_route_match_5):-
+    \+ arouter:route_route_match(/, path).
+
+test(route_route_match_6):-
+    \+ arouter:route_route_match(path, /).
+
+test(route_route_match_7):-
+    \+ arouter:route_route_match(_, /).
+
+test(route_route_match_8):-
+    \+ arouter:route_route_match(/, _).
+
+test(route_route_match_9):-
+    \+ arouter:route_route_match(path, _).
+
+test(route_route_match_10):-
+    \+ arouter:route_route_match(path, /(_, _)).
+
+test(route_route_match_11):-
+    \+ arouter:route_route_match(_, /(_, _)).
+
+test(route_route_match_12):-
+    \+ arouter:route_route_match(/(_, _), _).
+
+test(route_route_match_13):-
+    arouter:route_route_match(/(_, _), /(_, _)).
     
 test(index, [ setup(clean) ]):-
     route([ path('/'), method(get) ]),
@@ -145,7 +201,7 @@ test(invalid_route):-
 
 test(remove):-
     route_get(test/remove, true),
-    route(get, test/remove, _, _),
+    route(get, test/remove, _, _), !,
     route_remove(_, test/remove),
     (   route(get, test/remove, _, _)
     ->  fail
