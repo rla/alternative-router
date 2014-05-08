@@ -30,12 +30,6 @@ has to be used at the end of the path term. For example, to match URL
 `http://example.com/path/to/something/`, a path term `path/to/something/''`
 must be used.
 
-Why not "prettier" path terms? It is possible by overloading `/` as prefix and postfix
-operator. Then terms like `/something` and `/something/to/` can be used. However, defining
-single-symbol operators that are likely to clash with other modules has been intentionally
-avoided. In practical usage, most paths are likely to be normal paths anyway. If you do
-not agree with this then open an issue on the tracker.
-
 ## Using with http_dispatch
 
 Make fallback to `http_dispatch/1` like this:
