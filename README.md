@@ -5,6 +5,8 @@ This is an alternative router/dispatcher to Swi-Prolog's
 main motivation for creating this module was more convenient (less verbose) implementation
 of RESTful web services.
 
+[![Build Status](https://travis-ci.org/rla/alternative-router.svg)](https://travis-ci.org/rla/alternative-router)
+
 ## Example
 
     :- use_module(library(http/thread_httpd)).
