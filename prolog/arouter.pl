@@ -109,10 +109,7 @@ route_post(Route, Before, Goal):-
 new_route(Method, Route, Before, Goal):-
     must_be(atom, Method),
     check_route(Route),
-    (   existing_route(Method, Route, Ref)
-    ->  erase(Ref)
-    ;   true),
-    asserta(route(Method, Route, goal(Before), Goal)).
+    replace_add_route(Method, Route, goal(Before), Goal).
 
 %! new_route(+Method, +Route, :Goal) is det.
 %
@@ -123,10 +120,47 @@ new_route(Method, Route, Before, Goal):-
 new_route(Method, Route, Goal):-
     must_be(atom, Method),
     check_route(Route),
-    (   existing_route(Method, Route, Ref)
-    ->  erase(Ref)
-    ;   true),
-    asserta(route(Method, Route, none, Goal)).
+    replace_add_route(Method, Route, none, Goal).
+
+% Replaces matching route in one step
+% or adds a new route. Does not change
+% the original order of routes.
+
+replace_add_route(Method, Route, Before, Goal):-
+    routes_array(Array),
+    (   array_route(Array, Method, Route, Index)
+    ->  setarg(Index, Array, route(Method, Route, Before, Goal)),
+        copy_term(Array, Copy),
+        overwrite_routes(Copy)
+    ;   asserta(route(Method, Route, Before, Goal))).
+
+% Overwrites routes from the
+% given array.
+
+overwrite_routes(Array):-
+    Array =.. [_|List],
+    retractall(route(_, _, _, _)),
+    maplist(assertz, List).
+
+% Returns term with routes.
+% Used as an array to simplify
+% manipulation using indexes.
+
+routes_array(Routes):-
+    findall(
+        route(Method, Route, Before, Goal),
+        route(Method, Route, Before, Goal),
+        List),
+    Routes =.. [array|List].
+
+% Checks whether the given array of
+% routes has one with the matching
+% method and route. Index is 1-based.
+
+array_route(Array, Method, Route, Index):-
+    \+ atom(Array),
+    arg(Index, Array, route(Method, ERoute, _, _)),
+    route_route_match(Route, ERoute).
 
 check_route(Atom):-
     atomic(Atom), !.
