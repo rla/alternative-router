@@ -87,6 +87,27 @@ other. Routes are structurally equivalent when:
 
 Structural equivalence is used for detecting duplicate rules. This plays nice with the `make/0` goal.
 
+## Non-deterministic routing
+
+In some cases another matching (overlapping) route might have to be tried. This can be
+done by throwing `arouter_next` from the current route handler. Example:
+
+    :- route_get(something/specific, handle_specific).
+
+    handle_specific:-
+        ...
+
+    :- route_get(something/Generic, handle_generic(Generic)).
+
+    handle_generic(Generic):-
+        (   Generic = specific
+        ->  throw(arouter_next)
+        ;   ...).
+
+The handler `handle_specific` will handle the request in this case
+after throwing `arouter_next` from the `handle_generic` handler (handlers
+are tried in reverse order of adding them).
+
 ## List of predicates
 
 ### Adding new routes
@@ -173,6 +194,7 @@ Enable debugging with:
 
 ## Changelog
 
+ * 2015-11-01 version 1.1.0. Non-deterministic routing.
  * 2014-05-08 version 1.0.0. Precise route matching semantics.
  * 2014-02-01 version 0.0.1
 
