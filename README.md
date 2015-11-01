@@ -194,6 +194,7 @@ Enable debugging with:
 
 ## Changelog
 
+ * 2015-11-01 version 1.1.1. Attempt to preserve route order on `make`.
  * 2015-11-01 version 1.1.0. Non-deterministic routing.
  * 2014-05-08 version 1.0.0. Precise route matching semantics.
  * 2014-02-01 version 0.0.1
