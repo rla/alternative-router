@@ -3,6 +3,7 @@
 
 :- dynamic(visited/1).
 :- dynamic(before/1).
+:- dynamic(generic/0).
 
 % Root handler.
 
@@ -66,6 +67,22 @@ before(Token, Goal):-
 handle_hello(X):-
     assertz(visited(hello(X))).
 
+% Handlers for specific/general
+% routes.
+
+:- route_get(nondet/specific, handle_nondet_specific).
+
+handle_nondet_specific:-
+    assertz(visited(specific)).
+
+:- route_get(nondet/Generic, handle_nondet_generic(Generic)).
+
+handle_nondet_generic(Generic):-
+    assertz(generic),
+    (   Generic = specific
+    ->  throw(arouter_next)
+    ;   assertz(visited(generic))).
+
 % Custom method.
 
 :- new_route(options, test/custom, test_custom).
@@ -75,7 +92,8 @@ test_custom:-
 
 clean:-
     retractall(visited(_)),
-    retractall(before(_)).
+    retractall(before(_)),
+    retractall(generic).
 
 test(path1):-
     path_to_route('/', /).
@@ -206,5 +224,11 @@ test(remove):-
     (   route(get, test/remove, _, _)
     ->  fail
     ;   true).
+
+test(arouter_next, [ setup(clean) ]):-
+    \+ generic,
+    route([ path('/nondet/specific'), method(get) ]),
+    visited(specific),
+    generic.
 
 :- end_tests(arouter).

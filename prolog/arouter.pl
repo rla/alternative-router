@@ -244,11 +244,34 @@ route(Request):-
 % execution.
 
 dispatch(Method, Path):-
-    route(Method, Route, Before, Goal),
-    route_path_match(Route, Path), !,
+    path_route_matches(Method, Path, Matches),
+    try_next_match(Matches, Method, Path).
+
+try_next_match([Before-Goal|Matches], Method, Path):-
+    catch(try_run_handler(Before, Goal, Method, Path), Error, true),
+    (   nonvar(Error), Error = arouter_next
+    ->  try_next_match(Matches, Method, Path)
+    ;   (   nonvar(Error)
+        ->  throw(Error)
+        ;   true)).
+
+:- meta_predicate(try_run_handler(+, 0, +, +)).
+
+try_run_handler(Before, Goal, Method, Path):-
     (   run_handler(Before, Goal)
     ->  true
     ;   throw(error(handler_failed(Method, Path)))).
+
+%! path_route_matches(+Method, +Path, -Matches) is det.
+%
+% Finds list of matches as pairs of Before-Goal.
+
+path_route_matches(Method, Path, Matches):-
+    findall(Before-Goal,
+        (
+            route(Method, Route, Before, Goal),
+            route_path_match(Route, Path)),
+        Matches).
 
 :- meta_predicate(run_handler(+, 0)).
 
