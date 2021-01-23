@@ -1,6 +1,6 @@
 version:=$(shell swipl -q -s pack -g 'version(V),writeln(V)' -t halt)
 packfile=arouter-$(version).tgz
-remote=www-data@packs.rlaanemets.com:/sites/packs.rlaanemets.com/public/alternative-router
+remote=raivo@infdot.com:/files/infdot/infdot/packs/alternative-router
 
 package: test
 	tar cvzf $(packfile) prolog tests examples pack.pl README.md LICENSE
