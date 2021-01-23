@@ -40,7 +40,7 @@ Make fallback to `http_dispatch/1` like this:
     (   route(Request)
     ->  true
     ;   http_dispatch(Request)).
-    
+
 and use `handle_request/1` as the handler in `http_server`.
 
 ## Before-handler
@@ -58,7 +58,7 @@ before executing the handler:
         memberchk(path(Path), Request),
         current_output(Out),
         http_reply(forbidden(Path), Out, [])).
-    
+
     handle_resource:-
         ...
 
@@ -138,7 +138,7 @@ suitable term.
 Route handler predicates can take variables from the route. Example:
 
     :- http_get(post/show/Slug, post_show(Slug)).
-    
+
     post_show(Slug):-
         ...
 
@@ -194,6 +194,7 @@ Enable debugging with:
 
 ## Changelog
 
+ * 2021-01-23 version 2.0.0. HEAD method routes to GET handlers.
  * 2015-11-01 version 1.1.1. Attempt to preserve route order on `make`.
  * 2015-11-01 version 1.1.0. Non-deterministic routing.
  * 2014-05-08 version 1.0.0. Precise route matching semantics.

@@ -57,14 +57,14 @@ route_put(Route, Goal):-
 %! route_del(+Route, :Goal) is det.
 %
 % Registers a new DELETE route handler.
-    
+
 route_del(Route, Goal):-
     new_route(delete, Route, Goal).
 
 %! route_post(+Route, :Goal) is det.
 %
 % Registers a new POST route handler.
-    
+
 route_post(Route, Goal):-
     new_route(post, Route, Goal).
 
@@ -80,15 +80,15 @@ route_get(Route, Before, Goal):-
 %
 % Registers a new PUT route handler.
 % Accepts Before goal.
-    
+
 route_put(Route, Before, Goal):-
     new_route(put, Route, Before, Goal).
-    
+
 %! route_del(+Route, :Before, :Goal) is det.
 %
 % Registers a new DELETE route handler.
 % Accepts Before goal.
-    
+
 route_del(Route, Before, Goal):-
     new_route(delete, Route, Before, Goal).
 
@@ -96,7 +96,7 @@ route_del(Route, Before, Goal):-
 %
 % Registers a new POST route handler.
 % Accepts Before goal.
-    
+
 route_post(Route, Before, Goal):-
     new_route(post, Route, Before, Goal).
 
@@ -105,7 +105,7 @@ route_post(Route, Before, Goal):-
 % Registers a new method-specific route handler.
 % Does nothing when the route already exists
 % for the method.
-    
+
 new_route(Method, Route, Before, Goal):-
     must_be(atom, Method),
     check_route(Route),
@@ -261,13 +261,20 @@ remove_refs([]).
 % Throws handler_failed(Method, Path) when
 % handler was found but it failed during
 % execution.
-    
+
 route(Request):-
     memberchk(method(Method), Request),
     memberchk(path(Path), Request),
     path_to_route(Path, Route),
     debug(arouter, 'dispatch: ~p ~p', [Method, Route]),
-    dispatch(Method, Route).
+    method_head_to_get(Method, ActualMethod),
+    dispatch(ActualMethod, Route).
+
+% Turns HEAD method into GET.
+method_head_to_get(Method, ActualMethod):-
+    (   Method = head
+    ->  ActualMethod = get
+    ;   ActualMethod = Method).
 
 %! dispatch(+Method, +Route) is semidet.
 %
@@ -323,17 +330,17 @@ run_handler(Handler):-
 %
 % Turns path atom like '/path/to/something' into
 % a Prolog term path/to/something.
-    
-path_to_route(Path, Route):-    
+
+path_to_route(Path, Route):-
     atom_codes(Path, Codes),
     phrase(path_tokens([/|Tokens]), Codes),
     path_to_route_term(Tokens, Route), !.
-    
+
 path_to_route_term([], /).
-    
+
 path_to_route_term([First|Rest], Term):-
     path_to_route_term(Rest, First, Term).
-    
+
 path_to_route_term([/,A|Rest], Acc, Term):-
     path_to_route_term(Rest, /(Acc, A), Term).
 
@@ -347,7 +354,7 @@ path_to_route_term([], Acc, Acc).
 path_tokens([Token|Tokens]) -->
     path_token(Token),
     path_tokens(Tokens).
-    
+
 path_tokens([]) --> [].
 
 path_token(/) --> "/", !.
@@ -360,7 +367,7 @@ path_token(Atom) -->
 path_char_token([Char|Chars]) -->
     path_char(Char), !,
     path_char_token(Chars).
-    
+
 path_char_token([]) --> [].
 
 path_char(Char) --> [Char], { Char \= 0'/ }.

@@ -11,7 +11,7 @@
 
 index:-
     assertz(visited(/)).
-    
+
 % Handlers for normal paths.
 
 :- route_get(a, get_a).
@@ -97,16 +97,16 @@ clean:-
 
 test(path1):-
     path_to_route('/', /).
-    
+
 test(path2):-
     path_to_route('/a', a).
-    
+
 test(path3):-
     path_to_route('/a/b', a/b).
-    
+
 test(path4):-
     path_to_route('/a/b/c', a/b/c).
-    
+
 test(path5):-
     path_to_route('/a/b/c/', a/b/c/'').
 
@@ -165,13 +165,17 @@ test(route_route_match_12):-
 
 test(route_route_match_13):-
     arouter:route_route_match(/(_, _), /(_, _)).
-    
+
 test(index, [ setup(clean) ]):-
     route([ path('/'), method(get) ]),
     visited(/).
 
 test(get_a, [ setup(clean) ]):-
     route([ path('/a'), method(get) ]),
+    visited(get(a)).
+
+test(head_a, [ setup(clean) ]):-
+    route([ path('/a'), method(head) ]),
     visited(get(a)).
 
 test(post_a, [ setup(clean) ]):-
